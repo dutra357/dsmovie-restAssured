@@ -36,6 +36,13 @@ public class MovieControllerRA {
 	
 	@Test
 	public void findAllShouldReturnOkWhenMovieNoArgumentsGiven() {
+
+		given()
+				.when()
+				.get("/movies")
+
+				.then()
+				.statusCode(200);
 	}
 	
 	@Test
