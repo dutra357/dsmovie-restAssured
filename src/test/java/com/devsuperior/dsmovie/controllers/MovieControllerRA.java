@@ -18,7 +18,7 @@ import static org.hamcrest.CoreMatchers.*;
 
 public class MovieControllerRA {
 
-	private String clientUsername, clientPassword,
+	private String clientUsername, clientPassword, invalidToken,
 			adminUsername, adminPassword, clientToken, adminToken;
 
 	private Long existingId, nonExistingId;
@@ -34,14 +34,15 @@ public class MovieControllerRA {
 		postMovie.put("count", "1");
 		postMovie.put("image", "https://www.themoviedb.org/t/p/w533_and_h300_bestv2/jBJWaqoSCiARWtfV0GlqHrcdidd.jpg");
 
-		clientUsername = "maria@gmail.com";
+		clientUsername = "alex@gmail.com";
 		clientPassword = "123456";
 
-		adminUsername = "alex@gmail.com";
+		adminUsername = "maria@gmail.com";
 		adminPassword = "123456";
 
 		clientToken = TokenUtil.obtainAccessToken(clientUsername, clientPassword);
 		adminToken = TokenUtil.obtainAccessToken(adminUsername, adminPassword);
+		invalidToken = TokenUtil.obtainAccessToken("invalidUser", "invalidPassword");
 
 		existingId = 2L;
 		nonExistingId = 999L;
@@ -121,10 +122,40 @@ public class MovieControllerRA {
 	}
 	
 	@Test
+	@DisplayName("insert Should Return Forbidden When Client Logged")
 	public void insertShouldReturnForbiddenWhenClientLogged() throws Exception {
+		JSONObject meuFilme = new JSONObject(postMovie);
+
+		given()
+				.header("Content-type", "application-json")
+				.header("Authorization", "Bearer " + clientToken)
+				.body(meuFilme)
+				.contentType(ContentType.JSON)
+				.accept(ContentType.JSON)
+
+				.when()
+				.post("/movies")
+
+				.then()
+				.statusCode(403);
 	}
 	
 	@Test
+	@DisplayName("insert Should Return Unauthorized When Invalid Token is Informed")
 	public void insertShouldReturnUnauthorizedWhenInvalidToken() throws Exception {
+		JSONObject meuFilme = new JSONObject(postMovie);
+
+		given()
+				.header("Content-type", "application-json")
+				.header("Authorization", "Bearer " + invalidToken)
+				.body(meuFilme)
+				.contentType(ContentType.JSON)
+				.accept(ContentType.JSON)
+
+				.when()
+				.post("/movies")
+
+				.then()
+				.statusCode(401);
 	}
 }
