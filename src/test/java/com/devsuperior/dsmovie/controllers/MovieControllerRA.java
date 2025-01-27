@@ -49,7 +49,7 @@ public class MovieControllerRA {
 	}
 	
 	@Test
-	@DisplayName("findAll Should Return Ok When Movie No Arguments Given")
+	@DisplayName("FindALL Should Return Ok When Movie No Arguments Given")
 	public void findAllShouldReturnOkWhenMovieNoArgumentsGiven() {
 
 		given()
@@ -61,7 +61,7 @@ public class MovieControllerRA {
 	}
 	
 	@Test
-	@DisplayName("findAll Should Return Paged Movies When Movie Title Param Is Not Empty")
+	@DisplayName("FindALL Should Return Paged Movies When Movie Title Param Is Not Empty")
 	public void findAllShouldReturnPagedMoviesWhenMovieTitleParamIsNotEmpty() {
 		String title = "Witcher";
 
@@ -76,7 +76,7 @@ public class MovieControllerRA {
 	}
 	
 	@Test
-	@DisplayName("findById Should Return Movie When Id Exists")
+	@DisplayName("FindByID Should Return Movie When Id Exists")
 	public void findByIdShouldReturnMovieWhenIdExists() {
 
 		given()
@@ -90,7 +90,7 @@ public class MovieControllerRA {
 	}
 	
 	@Test
-	@DisplayName("findById Should Return Not Found When Id Does Not Exist")
+	@DisplayName("FindByID Should Return Not Found When Id Does Not Exist")
 	public void findByIdShouldReturnNotFoundWhenIdDoesNotExist() {
 		given()
 				.when()
@@ -101,7 +101,7 @@ public class MovieControllerRA {
 	}
 	
 	@Test
-	@DisplayName("insert Should Return Unprocessable Entity When Admin Logged And Blank Title")
+	@DisplayName("INSERT Should Return Unprocessable Entity When Admin Logged And Blank Title")
 	public void insertShouldReturnUnprocessableEntityWhenAdminLoggedAndBlankTitle() {
 
 		postMovie.put("title", "");
@@ -122,7 +122,7 @@ public class MovieControllerRA {
 	}
 	
 	@Test
-	@DisplayName("insert Should Return Forbidden When Client Logged")
+	@DisplayName("INSERT Should Return Forbidden When Client Logged")
 	public void insertShouldReturnForbiddenWhenClientLogged() throws Exception {
 		JSONObject meuFilme = new JSONObject(postMovie);
 
@@ -141,7 +141,7 @@ public class MovieControllerRA {
 	}
 	
 	@Test
-	@DisplayName("insert Should Return Unauthorized When Invalid Token is Informed")
+	@DisplayName("INSERT Should Return Unauthorized When Invalid Token is Informed")
 	public void insertShouldReturnUnauthorizedWhenInvalidToken() throws Exception {
 		JSONObject meuFilme = new JSONObject(postMovie);
 

@@ -16,8 +16,8 @@ import static io.restassured.RestAssured.given;
 
 public class ScoreControllerRA {
 
-	private String clientUsername, clientPassword, invalidToken,
-			adminUsername, adminPassword, clientToken, adminToken;
+	private String clientUsername, clientPassword,
+			adminUsername, adminPassword, clientToken;
 
 	private Long existingId, nonExistingId;
 	private Map<String, Object> postScore;
@@ -37,22 +37,18 @@ public class ScoreControllerRA {
 		adminPassword = "123456";
 
 		clientToken = TokenUtil.obtainAccessToken(clientUsername, clientPassword);
-		adminToken = TokenUtil.obtainAccessToken(adminUsername, adminPassword);
-		invalidToken = TokenUtil.obtainAccessToken("invalidUser", "invalidPassword");
 
-		existingId = 2L;
-		nonExistingId = 999L;
 	}
 	
 	@Test
-	@DisplayName("save Score Should Return Not Found When Movie Id Does Not Exist")
+	@DisplayName("SAVE Score Should Return Not Found When Movie Id Does Not Exist")
 	public void saveScoreShouldReturnNotFoundWhenMovieIdDoesNotExist() throws Exception {
 		postScore.put("movieId", "999");
 		JSONObject addScore = new JSONObject(postScore);
 
 		given()
 				.header("Content-type", "application-json")
-				.header("Authorization", "Bearer " + adminToken)
+				.header("Authorization", "Bearer " + clientToken)
 				.body(addScore)
 				.contentType(ContentType.JSON)
 				.accept(ContentType.JSON)
@@ -65,10 +61,42 @@ public class ScoreControllerRA {
 	}
 	
 	@Test
+	@DisplayName("SAVE Score Should Return Unprocessable Entity When Missing MovieId")
 	public void saveScoreShouldReturnUnprocessableEntityWhenMissingMovieId() throws Exception {
+		postScore.put("movieId", "");
+		JSONObject addScore = new JSONObject(postScore);
+
+		given()
+				.header("Content-type", "application-json")
+				.header("Authorization", "Bearer " + clientToken)
+				.body(addScore)
+				.contentType(ContentType.JSON)
+				.accept(ContentType.JSON)
+
+				.when()
+				.put("/scores")
+
+				.then()
+				.statusCode(422);
 	}
 	
 	@Test
-	public void saveScoreShouldReturnUnprocessableEntityWhenScoreIsLessThanZero() throws Exception {		
+	@DisplayName("SAVE Score Should Return Unprocessable Entity When Score Is Less Than Zero")
+	public void saveScoreShouldReturnUnprocessableEntityWhenScoreIsLessThanZero() throws Exception {
+		postScore.put("score", "-1.0");
+		JSONObject addScore = new JSONObject(postScore);
+
+		given()
+				.header("Content-type", "application-json")
+				.header("Authorization", "Bearer " + clientToken)
+				.body(addScore)
+				.contentType(ContentType.JSON)
+				.accept(ContentType.JSON)
+
+				.when()
+				.put("/scores")
+
+				.then()
+				.statusCode(422);
 	}
 }
