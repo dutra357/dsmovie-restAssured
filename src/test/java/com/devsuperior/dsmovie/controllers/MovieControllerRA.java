@@ -46,11 +46,22 @@ public class MovieControllerRA {
 	}
 	
 	@Test
-	public void findAllShouldReturnPagedMoviesWhenMovieTitleParamIsNotEmpty() {		
+	public void findAllShouldReturnPagedMoviesWhenMovieTitleParamIsNotEmpty() {
+		String title = "Witcher";
+
+		given()
+				.when()
+				.get("/movies?title={title}", title)
+
+				.then()
+				.statusCode(200)
+				.body("content[0].id", is(1))
+				.body("content[0].title", equalTo("The Witcher"));
 	}
 	
 	@Test
-	public void findByIdShouldReturnMovieWhenIdExists() {		
+	public void findByIdShouldReturnMovieWhenIdExists() {
+
 	}
 	
 	@Test
