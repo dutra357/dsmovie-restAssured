@@ -3,6 +3,7 @@ package com.devsuperior.dsmovie.controllers;
 import com.devsuperior.dsmovie.tests.TokenUtil;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
@@ -30,11 +31,12 @@ public class MovieControllerRA {
 		clientToken = TokenUtil.obtainAccessToken(clientUsername, clientPassword);
 		adminToken = TokenUtil.obtainAccessToken(adminUsername, adminPassword);
 
-		existingId = 1L;
+		existingId = 2L;
 		nonExistingId = 999L;
 	}
 	
 	@Test
+	@DisplayName("findAll Should Return Ok When Movie No Arguments Given")
 	public void findAllShouldReturnOkWhenMovieNoArgumentsGiven() {
 
 		given()
@@ -46,6 +48,7 @@ public class MovieControllerRA {
 	}
 	
 	@Test
+	@DisplayName("findAll Should Return Paged Movies When Movie Title Param Is Not Empty")
 	public void findAllShouldReturnPagedMoviesWhenMovieTitleParamIsNotEmpty() {
 		String title = "Witcher";
 
@@ -60,12 +63,28 @@ public class MovieControllerRA {
 	}
 	
 	@Test
+	@DisplayName("findById Should Return Movie When Id Exists")
 	public void findByIdShouldReturnMovieWhenIdExists() {
 
+		given()
+				.when()
+				.get("/movies/{id}", existingId)
+
+				.then()
+				.statusCode(200)
+				.body("id", is(2))
+				.body("title", equalTo("Venom: Tempo de Carnificina"));
 	}
 	
 	@Test
-	public void findByIdShouldReturnNotFoundWhenIdDoesNotExist() {	
+	@DisplayName("findById Should Return Not Found When Id Does Not Exist")
+	public void findByIdShouldReturnNotFoundWhenIdDoesNotExist() {
+		given()
+				.when()
+				.get("/movies/{id}", nonExistingId)
+
+				.then()
+				.statusCode(404);
 	}
 	
 	@Test
