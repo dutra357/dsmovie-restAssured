@@ -1,11 +1,16 @@
 package com.devsuperior.dsmovie.controllers;
 
 import com.devsuperior.dsmovie.tests.TokenUtil;
+import io.restassured.http.ContentType;
 import org.json.JSONException;
+import org.json.simple.JSONObject;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static io.restassured.RestAssured.baseURI;
 import static io.restassured.RestAssured.given;
@@ -17,10 +22,17 @@ public class MovieControllerRA {
 			adminUsername, adminPassword, clientToken, adminToken;
 
 	private Long existingId, nonExistingId;
+	private Map<String, Object> postMovie;
 
 	@BeforeEach
 	public void setUp() throws JSONException {
 		baseURI = "http://localhost:8080";
+
+		postMovie = new HashMap<>();
+		postMovie.put("title", "Meu Filme Favorito");
+		postMovie.put("score", "5.0");
+		postMovie.put("count", "1");
+		postMovie.put("image", "https://www.themoviedb.org/t/p/w533_and_h300_bestv2/jBJWaqoSCiARWtfV0GlqHrcdidd.jpg");
 
 		clientUsername = "maria@gmail.com";
 		clientPassword = "123456";
@@ -88,7 +100,24 @@ public class MovieControllerRA {
 	}
 	
 	@Test
-	public void insertShouldReturnUnprocessableEntityWhenAdminLoggedAndBlankTitle() throws JSONException {		
+	@DisplayName("insert Should Return Unprocessable Entity When Admin Logged And Blank Title")
+	public void insertShouldReturnUnprocessableEntityWhenAdminLoggedAndBlankTitle() {
+
+		postMovie.put("title", "");
+		JSONObject meuFilme = new JSONObject(postMovie);
+
+		given()
+				.header("Content-type", "application-json")
+				.header("Authorization", "Bearer " + adminToken)
+				.body(meuFilme)
+				.contentType(ContentType.JSON)
+				.accept(ContentType.JSON)
+
+				.when()
+				.post("/movies")
+
+				.then()
+				.statusCode(422);
 	}
 	
 	@Test
